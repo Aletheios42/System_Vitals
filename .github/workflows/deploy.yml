@@ -1,0 +1,28 @@
+name: Deploy Monitoring Stack
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Oracle Cloud
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            mkdir -p ~/monitoring
+          '
+          scp -r * ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/monitoring/
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            cd ~/monitoring
+            chmod +x setup.sh
+            ./setup.sh
+          '
