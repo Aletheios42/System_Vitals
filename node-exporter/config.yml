@@ -1,0 +1,5 @@
+# Node Exporter tiene configuración mínima, pero aquí hay algunas opciones básicas
+collectors:
+  enabled: ["cpu", "filesystem", "meminfo", "netdev"]
+no-collector:
+  - vmstat

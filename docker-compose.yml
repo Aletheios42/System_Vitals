@@ -1,3 +1,8 @@
+# Este archivo define los servicios que componen tu stack de monitoreo:
+# - prometheus: Almacena y consulta métricas del sistema
+# - grafana: Visualiza las métricas en dashboards
+# - node-exporter: Recopila métricas del sistema host
+
 version: "3"
 services:
   prometheus:
@@ -12,14 +17,29 @@ services:
     image: grafana/grafana
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/config.ini:/etc/grafana/grafana.ini
       - grafana-storage:/var/lib/grafana
     ports:
       - "3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=tucontraseñasegura
+      - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_USERS_ALLOW_SIGN_UP=false
     depends_on:
       - prometheus
+    restart: unless-stopped
+
+  node-exporter:
+    image: prom/node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--path.rootfs=/rootfs"
+    ports:
+      - "9100:9100"
     restart: unless-stopped
 
 volumes:

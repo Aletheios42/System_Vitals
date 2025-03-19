@@ -1,0 +1,16 @@
+# Define la fuente de datos Prometheus para Grafana
+# Esto permite que Grafana consulte métricas de Prometheus automáticamente
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    orgId: 1
+    uid: prometheus
+    url: http://prometheus:9090
+    basicAuth: false
+    isDefault: true
+    version: 1
+    editable: false

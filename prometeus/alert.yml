@@ -1,0 +1,14 @@
+# Define reglas de alerta para Prometheus
+# Estas alertas se disparan cuando se cumplen ciertas condiciones
+
+groups:
+  - name: basic_alerts
+    rules:
+      - alert: HighCPULoad
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU load (instance {{ $labels.instance }})"
+          description: "CPU load is > 80%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
